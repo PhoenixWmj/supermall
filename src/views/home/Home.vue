@@ -80,10 +80,11 @@ export default {
   },
   activated() {
     this.$refs.scroll.scrollTo(0, this.saveY, 0);
-    this.$refs.scroll.refresh();
+    // this.$refs.scroll.refresh();
   },
   deactivated() {
-    this.saveY = this.$refs.scroll.getScrollY();
+    this.saveY = -1000;
+    // this.saveY = this.$refs.scroll.getScrollY();
   },
   created() {
     // 1、请求多个数据

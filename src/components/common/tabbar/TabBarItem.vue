@@ -22,7 +22,7 @@ export default {
     path: String,
     activeColor: {
       type: String,
-      default: "pink",
+      default: "var(--color-high-text)",
     },
   },
   data() {
