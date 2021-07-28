@@ -27,7 +27,6 @@ export default {
   },
   methods: {
     imageLoad() {
-      // console.log("imageLoad");
       this.$bus.$emit("itemImageLoad");
     },
     itemClick() {

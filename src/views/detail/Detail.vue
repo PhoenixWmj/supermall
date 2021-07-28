@@ -21,7 +21,7 @@ import DetailShopInfo from "./childComps/DetailShopInfo";
 import DetailGoodsInfo from "./childComps/DetailGoodsInfo";
 import DetailParamInfo from "./childComps/DetailParamInfo";
 import DetailCommentInfo from "./childComps/DetailCommentInfo";
-import GoodsList from "components/content/goods/GoodsList";
+import GoodsList from "components/content/goods/GoodsList.vue";
 import Scroll from "components/common/scroll/Scroll";
 import {
   getDetail,
@@ -30,7 +30,7 @@ import {
   GoodsParam,
   getRecommend,
 } from "network/detail";
-
+import { itemListenerMixin } from "common/mixin";
 export default {
   name: "Detail",
   components: {
@@ -40,9 +40,9 @@ export default {
     DetailShopInfo,
     DetailGoodsInfo,
     DetailParamInfo,
-    Scroll,
     DetailCommentInfo,
     GoodsList,
+    Scroll,
   },
   data() {
     return {
@@ -54,8 +54,10 @@ export default {
       paramInfo: {},
       commentInfo: {},
       recommends: [],
+      // itemImgListener: null,
     };
   },
+  mixins: [itemListenerMixin],
   created() {
     // 1、保存传入的iid
     this.iid = this.$route.params.iid;
@@ -92,15 +94,24 @@ export default {
       }
     });
 
-    // 3、请求详情数据
+    // 3、请求推荐数据
     getRecommend().then((res) => {
       this.recommends = res.data.list;
     });
   },
+  // 4、监听详情页图片加载完成
   methods: {
     imageLoad() {
-      this.$refs.scroll.refresh();
+      // this.$refs.scroll.refresh();
+      this.refresh();
     },
+  },
+  mounted() {
+    // mixin.js中的内容
+    console.log("detail mounted");
+  },
+  destroyed() {
+    this.$bus.$off("itemImageLoad", this.itemImgListener);
   },
 };
 </script>

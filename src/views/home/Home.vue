@@ -44,7 +44,7 @@ import Scroll from "components/common/scroll/Scroll";
 import BackTop from "components/content/backTop/BackTop";
 
 import { getHomeMultidata, getHomeGoods } from "network/home";
-import { debounce } from "common/utils";
+import { itemListenerMixin } from "common/mixin";
 export default {
   name: "Home",
   components: {
@@ -71,8 +71,10 @@ export default {
       tabOffsetTop: 0,
       isTabFixed: false,
       saveY: 0,
+      // itemImgListener: null,
     };
   },
+  mixins: [itemListenerMixin],
   computed: {
     showGoods() {
       return this.goods[this.currentType].list;
@@ -80,11 +82,13 @@ export default {
   },
   activated() {
     this.$refs.scroll.scrollTo(0, this.saveY, 0);
-    // this.$refs.scroll.refresh();
+    this.$refs.scroll.refresh();
   },
   deactivated() {
-    this.saveY = -1000;
-    // this.saveY = this.$refs.scroll.getScrollY();
+    // 1、保存Y值
+    this.saveY = this.$refs.scroll.getScrollY();
+    // 2、取消全局事件的监听
+    this.$bus.$off("itemImageLoad", this.itemImgListener);
   },
   created() {
     // 1、请求多个数据
@@ -95,16 +99,24 @@ export default {
     this.getHomeGoods("sell");
   },
   mounted() {
-    // 监听item中图片加载完成
+    /* // 监听item中图片加载完成
     const refresh = debounce(this.$refs.scroll.refresh, 200);
-    this.$bus.$on("itemImageLoad", () => {
+    // this.$bus.$on("itemImageLoad", () => {
+    //   // this.$refs.scroll.refresh();
+    //   refresh();
+    // });
+
+    this.itemImgListener = () => {
       // this.$refs.scroll.refresh();
       refresh();
-    });
+    };
+    this.$bus.$on("itemImageLoad", this.itemImgListener); */
 
     // 获取tabControl的offsetTop
     // 所有的组件都有一个属性$el 用于获取组件中的元素
     // this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop;
+
+    console.log("home mounted");
   },
   methods: {
     // 事件监听相关的方法

@@ -10,7 +10,7 @@ export function getDetail(iid) {
 
 export function getRecommend() {
     return request({
-        url: '/recommend'
+        url: 'recommend'
     })
 }
 
@@ -24,7 +24,6 @@ export class Goods {
         this.columns = columns
         this.services = services
         this.realPrice = itemInfo.lowNowPrice
-        this.discountBgColor = itemInfo.discountBgColor
     }
 }
 
