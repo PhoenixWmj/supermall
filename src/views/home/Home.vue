@@ -41,10 +41,9 @@ import FeatureView from "./childComps/FeatureView";
 import TabControl from "components/content/tabControl/TabControl";
 import GoodsList from "components/content/goods/GoodsList";
 import Scroll from "components/common/scroll/Scroll";
-import BackTop from "components/content/backTop/BackTop";
 
 import { getHomeMultidata, getHomeGoods } from "network/home";
-import { itemListenerMixin } from "common/mixin";
+import { itemListenerMixin, backTopMixin } from "common/mixin";
 export default {
   name: "Home",
   components: {
@@ -55,7 +54,6 @@ export default {
     TabControl,
     GoodsList,
     Scroll,
-    BackTop,
   },
   data() {
     return {
@@ -67,14 +65,13 @@ export default {
         sell: { page: 0, list: [] },
       },
       currentType: "pop",
-      isShowBackTop: false,
       tabOffsetTop: 0,
       isTabFixed: false,
       saveY: 0,
       // itemImgListener: null,
     };
   },
-  mixins: [itemListenerMixin],
+  mixins: [itemListenerMixin, backTopMixin],
   computed: {
     showGoods() {
       return this.goods[this.currentType].list;
@@ -111,12 +108,10 @@ export default {
       refresh();
     };
     this.$bus.$on("itemImageLoad", this.itemImgListener); */
-
     // 获取tabControl的offsetTop
     // 所有的组件都有一个属性$el 用于获取组件中的元素
     // this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop;
-
-    console.log("home mounted");
+    // console.log("home mounted");
   },
   methods: {
     // 事件监听相关的方法
@@ -134,15 +129,6 @@ export default {
       }
       this.$refs.tabControl1.currentIndex = index;
       this.$refs.tabControl2.currentIndex = index;
-    },
-    backClick() {
-      this.$refs.scroll.scrollTo(0, 0, 1000);
-    },
-    contentScroll(position) {
-      // 判断BackTop是否显示
-      this.isShowBackTop = -position.y > 1000;
-      // 决定tabControl是否吸顶
-      this.isTabFixed = -position.y > this.tabOffsetTop;
     },
     loadMore() {
       this.getHomeGoods(this.currentType);
@@ -167,6 +153,12 @@ export default {
         this.goods[type].page += 1;
         this.$refs.scroll.finishPullUp();
       });
+    },
+    contentScroll(position) {
+      // 判断BackTop是否显示
+      this.isShowBackTop = -position.y > 1000;
+      // 决定tabControl是否吸顶
+      this.isTabFixed = -position.y > this.tabOffsetTop;
     },
   },
 };
